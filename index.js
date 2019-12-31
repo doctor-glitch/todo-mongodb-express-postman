@@ -10,8 +10,14 @@ app.get('/', function(req,res){
     const todos = todo.getTodo();
     res.json(todos);
 })
-app.get('/login', function(req,res){
-    res.send("Login Page");
+app.get('/add', function(req,res){
+    const todos = todo.addTodo({id:3, name:"todo4", description:"todo4 desc"});
+    res.json(todos);
+})
+app.get('/delete/:name', function(req,res){
+    const id = req.params.name;
+    const todos = todo.deleteTodo(id);
+    res.json(todos);
 })
 
 app.listen(port, function(){
