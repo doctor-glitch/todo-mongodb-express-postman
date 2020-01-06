@@ -20,18 +20,21 @@ app.post("/create", function (req, res) {
 });
 
 app.put("/edit/:id", function (req, res) {
-  const todos = todo.editTodo(
+  todo.editTodo(
     req.params.id,
     req.body.name,
     req.body.description
-  );
-  res.json(todos);
+  ).then(data => {
+    res.json(data);
+  })
+
 });
 
 app.delete("/delete/:id", function (req, res) {
-  const id = req.params.id;
-  const todos = todo.deleteTodo(id);
-  res.json(todos);
+  todo.deleteTodo(req.params.id).then(data=>{
+    res.json(data)
+  })
+  ;
 });
 
 app.listen(port, function () {
