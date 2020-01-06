@@ -22,7 +22,7 @@ function editTodo(id, name, description) {
   // return todos;
 }
 function getTodo() {
-  return db.Todo.find({});
+  return db.Todo.find({}).sort({name:'desc'});
 }
 function deleteTodo(id) {
   return db.Todo.deleteOne({ _id: id });
