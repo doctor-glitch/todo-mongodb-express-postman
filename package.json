@@ -1,7 +1,6 @@
 {
   "name": "todo-server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -11,6 +10,16 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
-  }
+    "express": "^4.17.1",
+    "mongoose": "^5.8.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sibin387/todo-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sibin387/todo-server/issues"
+  },
+  "homepage": "https://github.com/Sibin387/todo-server#readme",
+  "description": ""
 }
