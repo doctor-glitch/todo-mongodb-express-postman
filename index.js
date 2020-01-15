@@ -3,12 +3,21 @@ const bodyParser = require("body-parser");
 const todo = require("./todo/todo");
 const app = express();
 const port = 3000;
+const cors =require('cors');
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
 
 app.get("/", function (req, res) {
   todo.getTodo().then(todos => {
+    res.json(todos);
+  })
+});
+
+app.get("/search/:id", function (req, res) {
+  todo.searchTodo(req.params.id).then(todos => {
     res.json(todos);
   })
 });
