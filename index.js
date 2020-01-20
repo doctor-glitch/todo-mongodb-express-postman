@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const todo = require("./todo/todo");
+const user = require("./User/user");
 const app = express();
 const port = 3000;
 const cors =require('cors');
@@ -19,6 +20,12 @@ app.get("/", function (req, res) {
 app.get("/search/:id", function (req, res) {
   todo.searchTodo(req.params.id).then(todos => {
     res.json(todos);
+  })
+});
+
+app.post("/register", function (req, res) {
+  user.addUser(req.body).then(data => {
+    res.json(data);
   })
 });
 
