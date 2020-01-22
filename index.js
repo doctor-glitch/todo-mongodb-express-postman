@@ -4,7 +4,7 @@ const todo = require("./todo/todo");
 const user = require("./User/user");
 const app = express();
 const port = 3000;
-const cors =require('cors');
+const cors = require('cors');
 
 app.use(cors());
 
@@ -24,8 +24,25 @@ app.get("/search/:id", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
-  user.addUser(req.body).then(data => {
-    res.json(data);
+  user.checkUser(req.body.email).then(data => {
+    if (data) {
+      return res.status(422).json({ message: "User exists" });
+    } else {
+      user.addUser(req.body).then(data => {
+        res.json(data);
+      })
+    }
+  })
+});
+
+app.post("/login", function (req, res) {
+  user.findUser(req.body.email,req.body.password).then(data => {
+    console.log(data);
+    if (data) {
+      return res.json({ message: "User exists" });
+    }else{
+      return res.status(422).json({ message: "User doesnt exists" });
+    }
   })
 });
 
@@ -47,10 +64,10 @@ app.put("/edit/:id", function (req, res) {
 });
 
 app.delete("/delete/:id", function (req, res) {
-  todo.deleteTodo(req.params.id).then(data=>{
+  todo.deleteTodo(req.params.id).then(data => {
     res.json(data)
   })
-  ;
+    ;
 });
 
 app.listen(port, function () {
