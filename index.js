@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const todo = require("./todo/todo");
 const user = require("./User/user");
@@ -6,12 +7,24 @@ const app = express();
 const port = 3000;
 const cors = require('cors');
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true,
+}));
 
 app.use(bodyParser.json());
 
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 60000 }
+}))
 
 app.get("/", function (req, res) {
+  if (!req.session.user) {
+    return res.status(401).json({ message: 'not logged in' });
+  }
   todo.getTodo().then(todos => {
     res.json(todos);
   })
@@ -36,18 +49,24 @@ app.post("/register", function (req, res) {
 });
 
 app.post("/login", function (req, res) {
-  user.findUser(req.body.email,req.body.password).then(data => {
+  user.findUser(req.body.email, req.body.password).then(data => {
     console.log(data);
     if (data) {
-      return res.json({ message: "User exists" });
-    }else{
+      req.session.user = data;
+      return res.json({ message:"helo usr"});
+    } else {
       return res.status(422).json({ message: "User doesnt exists" });
     }
   })
 });
 
 app.post("/create", function (req, res) {
-  todo.addTodo(req.body).then(data => {
+  if (!req.session.user) {
+    return res.status(422).json({ message: "login please" })
+  }
+  let newTodo = req.body;
+  newTodo.userId = req.session.user._id;
+  todo.addTodo(newTodo).then(data => {
     res.json(data);
   })
 });

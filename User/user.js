@@ -9,7 +9,7 @@ function checkUser(email) {
 
 function findUser(email, password) {
   console.log(email, password);
-  return newUser = db.User.findOne({ email: email, password: password });
+  return newUser = db.User.findOne({ email, password }, "-password");
 }
 
 

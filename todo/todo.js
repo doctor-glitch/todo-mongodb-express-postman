@@ -2,6 +2,7 @@ const db = require("../db");
 
 function addTodo(todo) {
   const newTodo = new db.Todo(todo);
+  console.log(todo);
   return newTodo.save();
 }
 function editTodo(id, name, description) {
