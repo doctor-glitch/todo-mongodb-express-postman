@@ -8,8 +8,8 @@ function addTodo(todo) {
 function editTodo(id, name, description) {
   return db.Todo.update({ _id: id }, { name, description });
 }
-function getTodo() {
-  return db.Todo.find({}).sort({ name: 'desc' });
+function getTodo(userId) {
+  return db.Todo.find({userId}).sort({ name: 'desc' });
 }
 function deleteTodo(id) {
   return db.Todo.deleteOne({ _id: id });

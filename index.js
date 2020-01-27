@@ -21,16 +21,25 @@ app.use(session({
   cookie: { maxAge: 60000 }
 }))
 
-app.get("/", function (req, res) {
-  if (!req.session.user) {
-    return res.status(401).json({ message: 'not logged in' });
+var auth = function (req, res, next) {
+  if (req.session.user) {
+    next();
   }
-  todo.getTodo().then(todos => {
+  else {
+    return res.status(401).json({ message: "please login" });
+  }
+}
+
+app.get("/", auth, function (req, res) {
+  // if (!req.session.user) {
+  //   return res.status(401).json({ message: 'not logged in' });
+  // }
+  todo.getTodo(req.session.user._id).then(todos => {
     res.json(todos);
   })
 });
 
-app.get("/search/:id", function (req, res) {
+app.get("/search/:id",auth, function (req, res) {
   todo.searchTodo(req.params.id).then(todos => {
     res.json(todos);
   })
@@ -42,7 +51,8 @@ app.post("/register", function (req, res) {
       return res.status(422).json({ message: "User exists" });
     } else {
       user.addUser(req.body).then(data => {
-        res.json(data);
+        req.session.user = data;
+        return res.json({ message: "helo registered usr", user: data });
       })
     }
   })
@@ -53,17 +63,14 @@ app.post("/login", function (req, res) {
     console.log(data);
     if (data) {
       req.session.user = data;
-      return res.json({ message:"helo usr"});
+      return res.json({ message: "helo usr", user: data });
     } else {
       return res.status(422).json({ message: "User doesnt exists" });
     }
   })
 });
 
-app.post("/create", function (req, res) {
-  if (!req.session.user) {
-    return res.status(422).json({ message: "login please" })
-  }
+app.post("/create",auth, function (req, res) {
   let newTodo = req.body;
   newTodo.userId = req.session.user._id;
   todo.addTodo(newTodo).then(data => {
@@ -71,7 +78,7 @@ app.post("/create", function (req, res) {
   })
 });
 
-app.put("/edit/:id", function (req, res) {
+app.put("/edit/:id",auth, function (req, res) {
   todo.editTodo(
     req.params.id,
     req.body.name,
@@ -82,7 +89,7 @@ app.put("/edit/:id", function (req, res) {
 
 });
 
-app.delete("/delete/:id", function (req, res) {
+app.delete("/delete/:id",auth, function (req, res) {
   todo.deleteTodo(req.params.id).then(data => {
     res.json(data)
   })
